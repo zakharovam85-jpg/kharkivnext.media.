@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏙️ Місто | Харків.Новини</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">🌿 Харків<span>.Новини</span><small>акцент на головному</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn">🌱 Головне</a>
+        <a href="city.html" class="tab-btn active">🏙️ Місто</a>
+        <a href="war.html" class="tab-btn">🕊️ Безпека</a>
+        <a href="economy.html" class="tab-btn">📊 Економіка</a>
+        <a href="culture.html" class="tab-btn">🎭 Культура</a>
+        <a href="sport.html" class="tab-btn">⚽ Спорт</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="category-header">
+        <h1>🏙️ Місто</h1>
+        <p>Життя Харкова: транспорт, благоустрій, нові проєкти</p>
+    </div>
+    <div class="news-grid" id="cityNews"></div>
+    <div class="subscribe">
+        <h3>📩 Ранкова розсилка</h3>
+        <p>Щодня — головне про Харків</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="ваша ел. пошта">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🌿 Харків.Новини — зелений погляд на події міста</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const cityNews = [
+        { id: 1, title: "Харків отримає 500 млн грн на відновлення тепломереж", excerpt: "Міжнародна допомога дозволить підготувати місто до опалювального сезону 2026/2027.", content: "Харківська міська рада повідомила про отримання гранту від Європейського інвестиційного банку. Кошти будуть спрямовані на модернізацію теплових мереж у Салтівському та Немишлянському районах. Роботи розпочнуться у липні 2026 року. Очікується, що це дозволить зменшити втрати тепла на 25% та покращити якість опалення для 150 тисяч мешканців.", image: "https://picsum.photos/id/104/800/500", date: "2026-05-18", views: 12450, category: "Місто" },
+        { id: 2, title: "Відкриття станції метро «Державна»: новий зв'язок між районами", excerpt: "Третя лінія харківського метро розширюється — відтепер до Олексіївки можна доїхати на 12 хвилин швидше.", content: "Станцію «Державна» урочисто відкрито після завершення всіх будівельних робіт. Це суттєво розвантажить наземний транспорт та покращить сполучення між центром та периферією. Вартість проєкту склала 1.2 млрд грн. Наступна станція — «Перемога» — планується до кінця 2027 року.", image: "https://picsum.photos/id/96/800/500", date: "2026-05-15", views: 15780, category: "Місто" },
+        { id: 3, title: "Новий сквер на Салтівці: понад 500 дерев", excerpt: "Зелена зона з'явиться на місці зруйнованої будівлі.", content: "У рамках програми «Зелений Харків» розпочато висадку дерев у новому сквері. Буде висаджено 520 саджанців: липи, каштани та клени. Також облаштують дитячий майданчик та велодоріжки.", image: "https://picsum.photos/id/15/800/500", date: "2026-05-10", views: 8920, category: "Місто" },
+        { id: 4, title: "Харків'яни можуть впливати на бюджет міста", excerpt: "Громадський бюджет-2026: подано понад 200 проєктів.", content: "Міська рада оприлюднила список проєктів, які претендують на фінансування. Серед ініціатив — облаштування укриттів у школах, спортивні майданчики та екологічні ініціативи. Голосування триватиме до кінця травня.", image: "https://picsum.photos/id/42/800/500", date: "2026-05-05", views: 5430, category: "Місто" }
+    ];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`; }
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = `<img src="${news.image}"><div class="modal-meta"><span>📅 ${formatDate(news.date)}</span><span>👁️ ${news.views.toLocaleString()}</span><span>📌 ${news.category}</span></div><p style="line-height:1.6; color:#2c4a2e;">${news.content}</p>`;
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert(`🌱 Дякуємо! На ${email} надіслано підтвердження.`); else alert('Введіть email'); }
+    function renderCityNews() {
+        document.getElementById('cityNews').innerHTML = cityNews.map(n => `<div class="news-card" onclick="openNews(cityNews.find(x=>x.id===${n.id}))"><div class="news-image" style="background-image: url('${n.image}')"><div class="news-category">${n.category}</div></div><div class="news-content"><div class="news-title">${n.title}</div><div class="news-excerpt">${n.excerpt}</div><div class="news-meta"><span>📅 ${formatDate(n.date)}</span><span>👁️ ${n.views.toLocaleString()}</span></div></div></div>`).join('');
+    }
+    function updateDateTime() { document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('uk-UA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' }); }
+    setInterval(updateDateTime, 1000); updateDateTime();
+    renderCityNews();
+    window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 300); });
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews;
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Економіка | Харків.Новини</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">🌿 Харків<span>.Новини</span><small>акцент на головному</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn">🌱 Головне</a>
+        <a href="city.html" class="tab-btn">🏙️ Місто</a>
+        <a href="war.html" class="tab-btn">🕊️ Безпека</a>
+        <a href="economy.html" class="tab-btn active">📊 Економіка</a>
+        <a href="culture.html" class="tab-btn">🎭 Культура</a>
+        <a href="sport.html" class="tab-btn">⚽ Спорт</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="category-header">
+        <h1>📊 Економіка</h1>
+        <p>Бізнес, інвестиції, ринок праці та розвиток Харківщини</p>
+    </div>
+    <div class="news-grid" id="economyNews"></div>
+    <div class="subscribe">
+        <h3>📩 Ранкова розсилка</h3>
+        <p>Щодня — головне про Харків</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="ваша ел. пошта">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🌿 Харків.Новини — зелений погляд на події міста</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const economyNews = [
+        { id: 1, title: "Харківський тракторний завод відновив виробництво", excerpt: "Підприємство випустило першу партію техніки після трирічної перерви.", content: "ХТЗ відновив роботу завдяки державній підтримці та інвестиціям від європейських партнерів. Першу партію — 20 тракторів — відправлено аграріям Харківщини. Планується вихід на зовнішні ринки до кінця 2026 року. Завод створив 350 нових робочих місць.", image: "https://picsum.photos/id/77/800/500", date: "2026-05-20", views: 14200, category: "Економіка" },
+        { id: 2, title: "Новий індустріальний парк «Харків-Схід» отримав 200 млн грн інвестицій", excerpt: "Перші резиденти почнуть роботу вже восени 2026 року.", content: "Індустріальний парк розташований на території колишнього заводу «Світло Шахтаря». Інвестори планують відкрити виробництво будівельних матеріалів та переробку сільгосппродукції. Очікується створення 800 робочих місць.", image: "https://picsum.photos/id/79/800/500", date: "2026-05-16", views: 9830, category: "Економіка" },
+        { id: 3, title: "Безробіття в Харківській області знизилося до 7,2%", excerpt: "Ринок праці поступово відновлюється завдяки новим підприємствам.", content: "За даними обласного центру зайнятості, кількість зареєстрованих безробітних зменшилась на 15% порівняно з початком року. Найбільший попит — на будівельників, водіїв та IT-фахівців. Середня зарплата в регіоні зросла до 18 500 грн.", image: "https://picsum.photos/id/71/800/500", date: "2026-05-12", views: 7650, category: "Економіка" },
+        { id: 4, title: "У Харкові відкрився перший коворкінг для аграріїв", excerpt: "Простір для фермерів: консультації, навчання, доступ до техніки.", content: "Коворкінг створено за підтримки ПРООН. Аграрії зможуть отримувати безкоштовні консультації юристів, бухгалтерів, а також користуватися сучасною сільгосптехнікою. Першими учасниками стали 40 фермерських господарств.", image: "https://picsum.photos/id/64/800/500", date: "2026-05-08", views: 5420, category: "Економіка" },
+        { id: 5, title: "Харківська область отримала 50 млн євро на відновлення зрошувальних систем", excerpt: "Це дозволить повернути в обіг 15 тис. га земель.", content: "Кошти надані Європейським інвестиційним банком. Проект передбачає відновлення насосних станцій у Чугуївському, Лозівському та Балаклійському районах. Відновлення зрошення дозволить аграріям вирощувати більше овочів та технічних культур.", image: "https://picsum.photos/id/48/800/500", date: "2026-05-05", views: 12300, category: "Економіка" }
+    ];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`; }
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = `<img src="${news.image}"><div class="modal-meta"><span>📅 ${formatDate(news.date)}</span><span>👁️ ${news.views.toLocaleString()}</span><span>📌 ${news.category}</span></div><p style="line-height:1.6; color:#2c4a2e;">${news.content}</p>`;
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert(`🌱 Дякуємо! На ${email} надіслано підтвердження.`); else alert('Введіть email'); }
+    function renderEconomyNews() {
+        document.getElementById('economyNews').innerHTML = economyNews.map(n => `<div class="news-card" onclick="openNews(economyNews.find(x=>x.id===${n.id}))"><div class="news-image" style="background-image: url('${n.image}')"><div class="news-category">${n.category}</div></div><div class="news-content"><div class="news-title">${n.title}</div><div class="news-excerpt">${n.excerpt}</div><div class="news-meta"><span>📅 ${formatDate(n.date)}</span><span>👁️ ${n.views.toLocaleString()}</span></div></div></div>`).join('');
+    }
+    function updateDateTime() { document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('uk-UA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' }); }
+    setInterval(updateDateTime, 1000); updateDateTime();
+    renderEconomyNews();
+    window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 300); });
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews;
+</script>
+</body>
+</html>

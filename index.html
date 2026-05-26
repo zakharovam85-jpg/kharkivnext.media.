@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Харків.Новини — головне про місто</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">🌿 Харків<span>.Новини</span><small>акцент на головному</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn active">🌱 Головне</a>
+        <a href="city.html" class="tab-btn">🏙️ Місто</a>
+        <a href="war.html" class="tab-btn">🕊️ Безпека</a>
+        <a href="economy.html" class="tab-btn">📊 Економіка</a>
+        <a href="culture.html" class="tab-btn">🎭 Культура</a>
+        <a href="sport.html" class="tab-btn">⚽ Спорт</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="featured-news" id="featuredNews"></div>
+
+    <div class="section-title">📌 Теми тижня</div>
+    <div class="trending-list" id="trendingList"></div>
+
+    <div class="section-title">📰 Стрічка новин</div>
+    <div class="news-grid" id="latestNews"></div>
+
+    <div class="subscribe">
+        <h3>📩 Ранкова розсилка</h3>
+        <p>Кожен ранок — 5 головних новин Харкова. Без зайвого.</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="ваша ел. пошта">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🌿 Харків.Новини — зелений погляд на події міста</p>
+    <p>новини Харкова, аналітика, коментарі | 2026</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const allNews = [
+        { id: 1, title: "Харків отримає 500 млн грн на відновлення тепломереж", excerpt: "Міжнародна допомога дозволить підготувати місто до опалювального сезону 2026/2027.", content: "Харківська міська рада повідомила про отримання гранту від Європейського інвестиційного банку. Кошти будуть спрямовані на модернізацію теплових мереж у Салтівському та Немишлянському районах. Роботи розпочнуться у липні 2026 року.", image: "https://picsum.photos/id/104/800/500", date: "2026-05-18", views: 12450, category: "Місто" },
+        { id: 2, title: "У Харкові запрацював новий діагностичний центр для військових", excerpt: "Сучасне обладнання та провідні лікарі — щодня приймають до 120 захисників.", content: "На базі Харківської обласної лікарні відкрито реабілітаційний центр із найсучаснішим обладнанням. Тут проходять лікування військові з усієї Слобожанщини. Центр працює у дві зміни.", image: "https://picsum.photos/id/116/800/500", date: "2026-05-17", views: 9830, category: "Безпека" },
+        { id: 3, title: "Відкриття станції метро «Державна»: новий зв'язок між районами", excerpt: "Третя лінія харківського метро розширюється — відтепер до Олексіївки можна доїхати на 12 хвилин швидше.", content: "Станцію «Державна» відкрито після завершення всіх будівельних робіт. Це суттєво розвантажить наземний транспорт та покращить сполучення між центром та периферією.", image: "https://picsum.photos/id/96/800/500", date: "2026-05-15", views: 15780, category: "Місто" },
+        { id: 4, title: "Екопарк запрошує на фестиваль квітів", excerpt: "Понад 50 сортів тюльпанів та піони — у травні Харків стане ще зеленішим.", content: "Фестиваль квітів триватиме три вихідних. Окрім виставки, гостей чекають майстер-класи з флористики та благодійний ярмарок.", image: "https://picsum.photos/id/90/800/500", date: "2026-05-14", views: 6720, category: "Культура" },
+        { id: 5, title: "Харківський «Металіст» повертається до Першої ліги", excerpt: "Клуб здобув перемогу в останньому турі та забезпечив собі підвищення у класі.", content: "Фанати зустріли команду на площі Свободи. Президент клубу пообіцяв посилити склад перед новим сезоном.", image: "https://picsum.photos/id/29/800/500", date: "2026-05-12", views: 21100, category: "Спорт" },
+        { id: 6, title: "Будівництво нового житлового кварталу на Салтівці", excerpt: "Квартал «Зелений» стане першим повністю відновленим після 2024 року.", content: "Вже зведено перші три багатоповерхівки. Заселення планується на початок осені.", image: "https://picsum.photos/id/15/800/500", date: "2026-05-10", views: 9450, category: "Економіка" }
+    ];
+
+    const latestNews = [...allNews].sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 6);
+    const trendingNews = [...allNews].sort((a,b) => b.views - a.views).slice(0, 4);
+    const featured = [...allNews].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`; }
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = `<img src="${news.image}"><div class="modal-meta"><span>📅 ${formatDate(news.date)}</span><span>👁️ ${news.views.toLocaleString()}</span><span>📌 ${news.category}</span></div><p style="line-height:1.6; color:#2c4a2e;">${news.content}</p>`;
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert(`🌱 Дякуємо! На ${email} надіслано підтвердження.`); else alert('Будь ласка, введіть email'); }
+    function renderFeatured() {
+        document.getElementById('featuredNews').innerHTML = `<div class="featured-image" style="background-image: url('${featured.image}')"></div><div class="featured-content"><div class="featured-badge">🌟 Провідне</div><div class="featured-title">${featured.title}</div><div class="featured-excerpt">${featured.excerpt}</div><div><span style="color:#8aa88a; font-size:13px;">📅 ${formatDate(featured.date)} · 👁️ ${featured.views.toLocaleString()}</span></div></div>`;
+        document.querySelector('.featured-news').onclick = () => openNews(featured);
+    }
+    function renderTrending() {
+        document.getElementById('trendingList').innerHTML = trendingNews.map((n, i) => `<div class="trending-item" onclick="openNews(allNews.find(x=>x.id===${n.id}))"><div class="trending-number">${i+1}</div><div class="trending-title">${n.title}</div><div class="trending-views">👁️ ${n.views.toLocaleString()}</div></div>`).join('');
+    }
+    function renderLatest() {
+        document.getElementById('latestNews').innerHTML = latestNews.map(n => `<div class="news-card" onclick="openNews(allNews.find(x=>x.id===${n.id}))"><div class="news-image" style="background-image: url('${n.image}')"><div class="news-category">${n.category}</div></div><div class="news-content"><div class="news-title">${n.title}</div><div class="news-excerpt">${n.excerpt}</div><div class="news-meta"><span>📅 ${formatDate(n.date)}</span><span>👁️ ${n.views.toLocaleString()}</span></div></div></div>`).join('');
+    }
+    function updateDateTime() { document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('uk-UA', { hour: '2-digit', minute:'2-digit', day:'numeric', month:'short' }); }
+    setInterval(updateDateTime, 1000); updateDateTime();
+    renderFeatured(); renderTrending(); renderLatest();
+    window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 300); });
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews; window.allNews = allNews;
+</script>
+</body>
+</html>

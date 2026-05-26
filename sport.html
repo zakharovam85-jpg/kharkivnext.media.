@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚽ Спорт | Харків.Новини</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">🌿 Харків<span>.Новини</span><small>акцент на головному</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn">🌱 Головне</a>
+        <a href="city.html" class="tab-btn">🏙️ Місто</a>
+        <a href="war.html" class="tab-btn">🕊️ Безпека</a>
+        <a href="economy.html" class="tab-btn">📊 Економіка</a>
+        <a href="culture.html" class="tab-btn">🎭 Культура</a>
+        <a href="sport.html" class="tab-btn active">⚽ Спорт</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="category-header">
+        <h1>⚽ Спорт</h1>
+        <p>Футбол, баскетбол, теніс — всі спортивні події Харкова</p>
+    </div>
+    <div class="news-grid" id="sportNews"></div>
+    <div class="subscribe">
+        <h3>📩 Ранкова розсилка</h3>
+        <p>Щодня — головне про Харків</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="ваша ел. пошта">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🌿 Харків.Новини — зелений погляд на події міста</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const sportNews = [
+        { id: 1, title: "Харківський «Металіст» повертається до Першої ліги", excerpt: "Клуб здобув перемогу в останньому турі та забезпечив собі підвищення у класі.", content: "Фанати зустріли команду на площі Свободи. Президент клубу пообіцяв посилити склад перед новим сезоном. Головний тренер зазначив, що команда має амбітні плани — вже за два роки вийти до УПЛ. Матчі наступного сезону «Металіст» гратиме на стадіоні «Металіст» після завершення ремонтних робіт.", image: "https://picsum.photos/id/29/800/500", date: "2026-05-17", views: 21100, category: "Спорт" },
+        { id: 2, title: "Харків прийняв чемпіонат України з легкої атлетики", excerpt: "Змагання відбулися на оновленому стадіоні «Динамо».", content: "У чемпіонаті взяли участь понад 300 спортсменів з усіх регіонів України. Харків'яни вибороли 12 медалей, з яких 5 — золотих. Найкращим спортсменом змагань визнано стрибуна у висоту Олексія Кравця.", image: "https://picsum.photos/id/14/800/500", date: "2026-05-15", views: 9830, category: "Спорт" },
+        { id: 3, title: "Відкрито новий басейн для дітей у Немишлянському районі", excerpt: "Сучасний спортивний комплекс зможе приймати до 200 юних плавців щодня.", content: "Басейн збудовано за програмою «Спорт для кожного». Він обладнаний сучасною системою очищення води та має три доріжки по 25 метрів. Тренування будуть безкоштовними для дітей пільгових категорій.", image: "https://picsum.photos/id/35/800/500", date: "2026-05-12", views: 6540, category: "Спорт" },
+        { id: 4, title: "Харківський баскетбольний клуб вийшов у півфінал чемпіонату", excerpt: "Вирішальний матч відбудеться у Києві 25 травня.", content: "Команда «Харківські Соколи» перемогла у чвертьфіналі львівських «Леви» із рахунком 87:82. Найкращим гравцем матчу визнано розігруючого Івана Петренка, який набрав 25 очок. Півфінал відбудеться 25 травня.", image: "https://picsum.photos/id/38/800/500", date: "2026-05-10", views: 8920, category: "Спорт" },
+        { id: 5, title: "У Харкові пройшов міжнародний турнір з тенісу серед юніорів", excerpt: "Учасники з 8 країн змагалися на кортах тенісного центру.", content: "Переможцем турніру став 16-річний харків'янин Андрій Шевченко. У фіналі він обіграв представника Польщі у двох сетах. Організатори планують зробити турнір щорічним.", image: "https://picsum.photos/id/96/800/500", date: "2026-05-06", views: 5430, category: "Спорт" }
+    ];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`; }
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = `<img src="${news.image}"><div class="modal-meta"><span>📅 ${formatDate(news.date)}</span><span>👁️ ${news.views.toLocaleString()}</span><span>📌 ${news.category}</span></div><p style="line-height:1.6; color:#2c4a2e;">${news.content}</p>`;
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert(`🌱 Дякуємо! На ${email} надіслано підтвердження.`); else alert('Введіть email'); }
+    function renderSportNews() {
+        document.getElementById('sportNews').innerHTML = sportNews.map(n => `<div class="news-card" onclick="openNews(sportNews.find(x=>x.id===${n.id}))"><div class="news-image" style="background-image: url('${n.image}')"><div class="news-category">${n.category}</div></div><div class="news-content"><div class="news-title">${n.title}</div><div class="news-excerpt">${n.excerpt}</div><div class="news-meta"><span>📅 ${formatDate(n.date)}</span><span>👁️ ${n.views.toLocaleString()}</span></div></div></div>`).join('');
+    }
+    function updateDateTime() { document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('uk-UA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' }); }
+    setInterval(updateDateTime, 1000); updateDateTime();
+    renderSportNews();
+    window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 300); });
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews;
+</script>
+</body>
+</html>

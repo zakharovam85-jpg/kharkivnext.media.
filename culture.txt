@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎭 Культура | Харків.Новини</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo" onclick="location.href='index.html'">🌿 Харків<span>.Новини</span><small>акцент на головному</small></div>
+        <div class="date-time" id="currentDateTime"></div>
+    </div>
+</div>
+
+<div class="tabs">
+    <div class="tabs-container">
+        <a href="index.html" class="tab-btn">🌱 Головне</a>
+        <a href="city.html" class="tab-btn">🏙️ Місто</a>
+        <a href="war.html" class="tab-btn">🕊️ Безпека</a>
+        <a href="economy.html" class="tab-btn">📊 Економіка</a>
+        <a href="culture.html" class="tab-btn active">🎭 Культура</a>
+        <a href="sport.html" class="tab-btn">⚽ Спорт</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="category-header">
+        <h1>🎭 Культура</h1>
+        <p>Театри, музеї, музика, література — культурне життя Харкова</p>
+    </div>
+    <div class="news-grid" id="cultureNews"></div>
+    <div class="subscribe">
+        <h3>📩 Ранкова розсилка</h3>
+        <p>Щодня — головне про Харків</p>
+        <div class="subscribe-form">
+            <input type="email" id="subEmail" placeholder="ваша ел. пошта">
+            <button onclick="subscribeNews()">Підписатись</button>
+        </div>
+    </div>
+</div>
+
+<div class="footer">
+    <p>🌿 Харків.Новини — зелений погляд на події міста</p>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">↑</div>
+
+<div id="newsModal" class="modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-content">
+        <div class="modal-header"><h2 id="modalTitle"></h2><span class="close-modal" onclick="closeModal()">&times;</span></div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+    const cultureNews = [
+        { id: 1, title: "Харківський театр опери та балету відкрив 100-й ювілейний сезон", excerpt: "Глядачів чекає прем'єра балету «Лісова пісня» та гастролі європейських зірок.", content: "Ювілейний сезон відкрито виставою «Наталка Полтавка». До кінця року заплановано 12 прем'єр, а також благодійні вистави для військових та переселенців. Театр також анонсував міжнародний фестиваль оперного мистецтва за участі солістів з Італії, Франції та Польщі.", image: "https://picsum.photos/id/30/800/500", date: "2026-05-19", views: 11300, category: "Культура" },
+        { id: 2, title: "Екопарк запрошує на фестиваль квітів", excerpt: "Понад 50 сортів тюльпанів та піони — у травні Харків стане ще зеленішим.", content: "Фестиваль квітів триватиме три вихідних. Окрім виставки, гостей чекають майстер-класи з флористики, благодійний ярмарок на підтримку ЗСУ та концерт просто неба. Вхід — вільний.", image: "https://picsum.photos/id/90/800/500", date: "2026-05-14", views: 8720, category: "Культура" },
+        { id: 3, title: "У Харкові відреставрують будівлю «Держпрому»", excerpt: "Пам'ятка архітектури отримає друге життя за 300 млн грн.", content: "Реставрація триватиме два роки. Планується відновлення історичного фасаду, заміна комунікацій та облаштування сучасного освітньо-культурного центру всередині. Проект реалізується за підтримки ЮНЕСКО.", image: "https://picsum.photos/id/12/800/500", date: "2026-05-11", views: 15400, category: "Культура" },
+        { id: 4, title: "Харківський літературний фестиваль збере понад 100 письменників", excerpt: "Три дні поезії, прози та зустрічей з читачами.", content: "Фестиваль «Харківські літературні вечори» відбудеться на початку червня. Учасники — з України, Польщі, Литви та Чехії. Головна тема — література опору та відновлення. Вхід на всі події безкоштовний.", image: "https://picsum.photos/id/0/800/500", date: "2026-05-07", views: 6320, category: "Культура" },
+        { id: 5, title: "Молодіжний симфонічний оркестр Харкова виступив у Львові", excerpt: "Музиканти представили програму з творів українських композиторів.", content: "Гастрольний тур оркестру триває. Після Львова музиканти вирушать до Івано-Франківська та Ужгорода. У програмі — твори Миколи Лисенка, Левка Ревуцького та сучасних композиторів.", image: "https://picsum.photos/id/39/800/500", date: "2026-05-03", views: 4570, category: "Культура" }
+    ];
+
+    function formatDate(dateStr) { const d = new Date(dateStr); return `${d.getDate().toString().padStart(2,'0')}.${(d.getMonth()+1).toString().padStart(2,'0')}.${d.getFullYear()}`; }
+    function openNews(news) { 
+        document.getElementById('modalTitle').innerHTML = news.title;
+        document.getElementById('modalBody').innerHTML = `<img src="${news.image}"><div class="modal-meta"><span>📅 ${formatDate(news.date)}</span><span>👁️ ${news.views.toLocaleString()}</span><span>📌 ${news.category}</span></div><p style="line-height:1.6; color:#2c4a2e;">${news.content}</p>`;
+        document.getElementById('newsModal').style.display = 'flex';
+    }
+    function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
+    function subscribeNews() { const email = document.getElementById('subEmail').value; if(email) alert(`🌱 Дякуємо! На ${email} надіслано підтвердження.`); else alert('Введіть email'); }
+    function renderCultureNews() {
+        document.getElementById('cultureNews').innerHTML = cultureNews.map(n => `<div class="news-card" onclick="openNews(cultureNews.find(x=>x.id===${n.id}))"><div class="news-image" style="background-image: url('${n.image}')"><div class="news-category">${n.category}</div></div><div class="news-content"><div class="news-title">${n.title}</div><div class="news-excerpt">${n.excerpt}</div><div class="news-meta"><span>📅 ${formatDate(n.date)}</span><span>👁️ ${n.views.toLocaleString()}</span></div></div></div>`).join('');
+    }
+    function updateDateTime() { document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('uk-UA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' }); }
+    setInterval(updateDateTime, 1000); updateDateTime();
+    renderCultureNews();
+    window.addEventListener('scroll', () => { document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 300); });
+    window.openNews = openNews; window.closeModal = closeModal; window.subscribeNews = subscribeNews;
+</script>
+</body>
+</html>
